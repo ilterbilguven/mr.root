@@ -11,7 +11,7 @@ namespace MrRoot.Player
 {
     public class RaySlicer : MonoBehaviour
     {
-        public static event Action FlagHit;
+        public static event Action FlagHit; 
 
         private MrRootInput _input;
 
