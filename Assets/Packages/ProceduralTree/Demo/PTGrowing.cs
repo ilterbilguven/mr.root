@@ -9,7 +9,7 @@ namespace ProceduralModeling {
 
 		Material material;
 
-		const string kGrowingKey = "_T";
+		const string kGrowingKey = "_Transition";
 
 		void OnEnable () {
 			material = GetComponent<MeshRenderer>().material;
