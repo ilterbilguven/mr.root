@@ -26,6 +26,8 @@ namespace BzKovSoft.ObjectSlicer
 		[HideInInspector]
 		public SliceTry lastSuccessfulSlice;
 
+		public event Action<BzSliceTryResult> Results;
+
 		private void OnEnable()
 		{
 			_sliceTrys = new Queue<SliceTry>();
@@ -225,6 +227,7 @@ namespace BzKovSoft.ObjectSlicer
 		{
 			// duplicate object
 			GameObject resultObjNeg, resultObjPos;
+			
 			GetNewObjects(out resultObjNeg, out resultObjPos);
 			var renderersNeg = GetRenderers(resultObjNeg);
 			var renderersPos = GetRenderers(resultObjPos);
@@ -241,7 +244,9 @@ namespace BzKovSoft.ObjectSlicer
 				// reject this slice try
 				return null;
 			}
-
+			
+			
+			
 			Profiler.BeginSample("ComponentManager.OnSlicedMainThread");
 			sliceTry.sliceData.componentManager.OnSlicedMainThread(resultObjNeg, resultObjPos, renderersNeg, renderersPos);
 			Profiler.EndSample();
@@ -276,6 +281,8 @@ namespace BzKovSoft.ObjectSlicer
 
 			result.outObjectNeg = resultObjNeg;
 			result.outObjectPos = resultObjPos;
+			
+			Results?.Invoke(result);
 
 			return result;
 		}

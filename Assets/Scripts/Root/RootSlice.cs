@@ -5,17 +5,33 @@ using System.Diagnostics;
 using BzKovSoft.ObjectSlicer;
 using BzKovSoft.ObjectSlicer.Samples;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace MrRoot.Root
 {
 	public class RootSlice : BzSliceableObjectBase, IBzSliceableNoRepeat
 	{
 		[HideInInspector]
-		[SerializeField]
-		int _sliceId;
+		[SerializeField] int _sliceId;
 		[HideInInspector]
-		[SerializeField]
-		float _lastSliceTime = float.MinValue;
+		[SerializeField] float _lastSliceTime = float.MinValue;
+
+		private Collider _meshCollider;
+		private Renderer _renderer;
+		
+
+		private void Start()
+		{
+			_meshCollider = GetComponent<Collider>();
+			_renderer = GetComponent<Renderer>();
+			Results += OnResult;
+		}
+
+		private void OnDestroy()
+		{
+			Results -= OnResult;
+		}
+
 		/// <summary>
 		/// If your code do not use SliceId, it can relay on delay between last slice and new.
 		/// If real delay is less than this value, slice will be ignored
@@ -107,10 +123,28 @@ namespace MrRoot.Root
 		
 		public void Slice(Vector3 normal, Vector3 point)
 		{
+			_meshCollider.enabled = false;
+			
 			Plane plane = new Plane(normal, point);
 
 			Slice(plane, _sliceID++, null);
 		}
+
+		private void OnResult(BzSliceTryResult result)
+		{
+			result.outObjectNeg.layer = LayerMask.NameToLayer("Ignore Raycast");
+			result.outObjectPos.layer = LayerMask.NameToLayer("Ignore Raycast");
+			var material = result.meshItems[0].rendererNeg.material;
+			result.meshItems[0].rendererPos.materials[0] = new Material(material);
+		}
+
+		// public void RollBack(Vector3 hitPoint)
+		// {
+		// 	
+		// 	var perc = (hitPoint.y - _meshCollider.bounds.min.y) / _meshCollider.bounds.size.y;
+		// 	_renderer.material.SetFloat("Transition",perc);
+		// }
+		
 
 		private bool _sliced;
 		

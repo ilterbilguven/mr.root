@@ -95,6 +95,7 @@ namespace MrRoot.Player
                         DrawPlane(rootHit.point, normal);
                     
                         rootSlice.Slice(normal, rootHit.point);
+                        //rootSlice.RollBack(rootHit.point);
                     }
                 }
             }
