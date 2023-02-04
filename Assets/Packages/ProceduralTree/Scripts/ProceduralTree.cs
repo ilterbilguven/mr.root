@@ -12,29 +12,45 @@ namespace ProceduralModeling {
 		[SerializeField, Range(2, 8)] protected int generations = 5;
 		[SerializeField, Range(0.5f, 5f)] protected float length = 1f;
 		[SerializeField, Range(0.1f, 2f)] protected float radius = 0.15f;
+		
+		private TreeBranch _treeRoot;
 
+		public TreeBranch TreeRoot => _treeRoot;
+		
 		const float PI2 = Mathf.PI * 2f;
 
-		public static Mesh Build(TreeData data, int generations, float length, float radius) {
+		public static Mesh Build(TreeData data, int generations, float length, float radius, bool meshGen, out TreeBranch root) {
 			data.Setup();
 
-			var root = new TreeBranch(
+			root = new TreeBranch(
 				generations, 
 				length, 
 				radius, 
 				data
 			);
 
-			var vertices = new List<Vector3>();
-			var normals = new List<Vector3>();
-			var tangents = new List<Vector4>();
-			var uvs = new List<Vector2>();
-			var triangles = new List<int>();
-
+			List<Vector3> vertices = null, normals = null;
+			List<Vector4> tangents = null;
+			List<Vector2> uvs = null;
+			List<int> triangles = null;
+			
+			if (meshGen)
+			{
+				vertices = new List<Vector3>();
+				normals = new List<Vector3>();
+				tangents = new List<Vector4>();
+				uvs = new List<Vector2>();
+				triangles = new List<int>();
+			}
+			
 			float maxLength = TraverseMaxLength(root);
 
 			Traverse(root, (branch) => {
-				var offset = vertices.Count;
+				var offset = 0;
+				if (meshGen)
+				{
+					offset = vertices.Count;
+				}
 
 				var vOffset = branch.Offset / maxLength;
 				var vLength = branch.Length / maxLength;
@@ -46,53 +62,83 @@ namespace ProceduralModeling {
 					var segment = branch.Segments[i];
 					var N = segment.Frame.Normal;
 					var B = segment.Frame.Binormal;
-					for(int j = 0; j <= data.radialSegments; j++) {
-						// 0.0 ~ 2π
-						var u = 1f * j / data.radialSegments;
-						float rad = u * PI2;
 
-						float cos = Mathf.Cos(rad), sin = Mathf.Sin(rad);
-						var normal = (cos * N + sin * B).normalized;
-						vertices.Add(segment.Position + segment.Radius * normal);
-						normals.Add(normal);
+					if (meshGen)
+					{
+						for (int j = 0; j <= data.radialSegments; j++)
+						{
+							// 0.0 ~ 2π
+							var u = 1f * j / data.radialSegments;
+							float rad = u * PI2;
 
-						var tangent = segment.Frame.Tangent;
-						tangents.Add(new Vector4(tangent.x, tangent.y, tangent.z, 0f));
+							float cos = Mathf.Cos(rad), sin = Mathf.Sin(rad);
+							var normal = (cos * N + sin * B).normalized;
+							vertices.Add(segment.Position + segment.Radius * normal);
+							normals.Add(normal);
 
-						uvs.Add(new Vector2(u, v));
+							var tangent = segment.Frame.Tangent;
+							tangents.Add(new Vector4(tangent.x, tangent.y, tangent.z, 0f));
+
+							uvs.Add(new Vector2(u, v));
+						}
 					}
 				}
 
-				for (int j = 1; j <= data.heightSegments; j++) {
-					for (int i = 1; i <= data.radialSegments; i++) {
-						int a = (data.radialSegments + 1) * (j - 1) + (i - 1);
-						int b = (data.radialSegments + 1) * j + (i - 1);
-						int c = (data.radialSegments + 1) * j + i;
-						int d = (data.radialSegments + 1) * (j - 1) + i;
+				if (meshGen)
+				{
+					for (int j = 1; j <= data.heightSegments; j++)
+					{
+						for (int i = 1; i <= data.radialSegments; i++)
+						{
+							int a = (data.radialSegments + 1) * (j - 1) + (i - 1);
+							int b = (data.radialSegments + 1) * j + (i - 1);
+							int c = (data.radialSegments + 1) * j + i;
+							int d = (data.radialSegments + 1) * (j - 1) + i;
 
-						a += offset;
-						b += offset;
-						c += offset;
-						d += offset;
+							a += offset;
+							b += offset;
+							c += offset;
+							d += offset;
 
-						triangles.Add(a); triangles.Add(d); triangles.Add(b);
-						triangles.Add(b); triangles.Add(d); triangles.Add(c);
+							triangles.Add(a); triangles.Add(d); triangles.Add(b);
+							triangles.Add(b); triangles.Add(d); triangles.Add(c);
+						}
 					}
 				}
 			});
 
-			var mesh = new Mesh();
-			mesh.vertices = vertices.ToArray();
-			mesh.normals = normals.ToArray();
-			mesh.tangents = tangents.ToArray();
-			mesh.uv = uvs.ToArray();
-			mesh.triangles = triangles.ToArray();
+			Mesh mesh = null;
+
+			if (meshGen)
+			{
+				mesh = new Mesh();
+				mesh.vertices = vertices.ToArray();
+				mesh.normals = normals.ToArray();
+				mesh.tangents = tangents.ToArray();
+				mesh.uv = uvs.ToArray();
+				mesh.triangles = triangles.ToArray();
+			}
 			return mesh;
+		}
+
+		public override TreeBranch BuildData ()
+		{
+			TreeBranch root;
+			Build(data, generations, length, radius, false, out root);
+
+			Debug.Log($"root: {root.Children.Count}");
+			return root;
 		}
 
 		protected override Mesh Build ()
 		{
-			return Build(data, generations, length, radius);
+			TreeBranch root;
+			var mesh = Build(data, generations, length, radius, true, out root);
+
+			_treeRoot = root;
+
+			Debug.Log($"root: {root.Children.Count}");
+			return mesh;
 		}
 
 		static float TraverseMaxLength(TreeBranch branch) {
@@ -197,8 +243,11 @@ namespace ProceduralModeling {
             var scale = Mathf.Lerp(1f, data.growthAngleScale, 1f - 1f * generation / generations);
             // var rotation = Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), normal) * Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), binormal);
             var rotation = Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), normal) * Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), binormal);
-            rotation.SetFromToRotation(from, direction);
-            this.to = from + rotation * tangent * length;
+
+			var dx = Vector3.Lerp(rotation * tangent, direction, data.targetBias);
+			dx.Normalize();
+
+			this.to = from + dx * length;
 
 
             this.length = length;

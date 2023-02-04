@@ -7,6 +7,7 @@ namespace ProceduralModeling {
 	[RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
 	[ExecuteInEditMode]
 	public abstract class ProceduralModelingBase : MonoBehaviour {
+		[SerializeField] private bool _buildOnStart;
 
 		public MeshFilter Filter {
 			get {
@@ -20,7 +21,8 @@ namespace ProceduralModeling {
 		MeshFilter filter;
 
 		protected virtual void Start () {
-			Rebuild();
+			if(_buildOnStart)
+				Rebuild();
 		}
 
 		public void Rebuild() {
@@ -35,6 +37,8 @@ namespace ProceduralModeling {
 		}
 
 		protected abstract Mesh Build();
+
+		public abstract TreeBranch BuildData();
 
 	}
 		
