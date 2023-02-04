@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace ProceduralModeling {
 	public class PTGrowing : MonoBehaviour {
 
 		Material material;
+		[SerializeField] private ProceduralTree _pt;
 
 		const string kGrowingKey = "_Transition";
 
@@ -17,7 +19,12 @@ namespace ProceduralModeling {
 		}
 
 		void Start () {
-			StartCoroutine(IGrowing(3f));
+			_pt.Rebuilt += OnPtRebuilt;
+		}
+
+		private void OnPtRebuilt()
+		{
+			StartCoroutine(IGrowing(0.4f));
 		}
 
 		IEnumerator IGrowing(float duration) {
@@ -25,7 +32,7 @@ namespace ProceduralModeling {
 			var time = 0f;
 			while(time < duration) { 
 				yield return 0;
-				material.SetFloat(kGrowingKey, time / duration);
+				material.SetFloat(kGrowingKey, 1f);//kGrowingKey, time / duration);
 				time += Time.deltaTime;
 			}
 			material.SetFloat(kGrowingKey, 1f);

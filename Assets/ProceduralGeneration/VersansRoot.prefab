@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3589386497100450980
 MeshFilter:
@@ -97,20 +97,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2887d9e1347224887b4884ed8460a654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPoint: {fileID: 0}
+  _buildOnStart: 1
+  _sphere: {fileID: 0}
   data:
-    randomSeed: 0
-    lengthAttenuation: 0.696
+    randomSeed: 84
+    lengthAttenuation: 0.725
     radiusAttenuation: 0.614
     branchesMin: 1
     branchesMax: 2
     growthAngleMin: 0
-    growthAngleMax: 2.9
+    growthAngleMax: 8.8
     growthAngleScale: 1
     branchingAngle: 6.1
-    heightSegments: 14
+    heightSegments: 9
     radialSegments: 12
     bendDegree: 0.253
+    targetPoint: {fileID: 0}
+    tempTargetPosition: {x: -0.4554484, y: 2, z: 0.4554484}
+    targetBias: 1
   generations: 8
   length: 5
   radius: 0.17
@@ -126,3 +130,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fade3408622cc489389f11fa87ef789f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _pt: {fileID: 3476000395436537920}

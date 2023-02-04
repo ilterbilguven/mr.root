@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ProceduralModeling {
 
-    public abstract class CurveBase : ScriptableObject {
+    public abstract class CurveBase {
 
 		public List<Vector3> Points { get { return points; } }
 

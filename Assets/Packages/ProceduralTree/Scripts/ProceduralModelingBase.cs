@@ -5,7 +5,6 @@ using UnityEngine;
 namespace ProceduralModeling {
 
 	[RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
-	[ExecuteInEditMode]
 	public abstract class ProceduralModelingBase : MonoBehaviour {
 		[SerializeField] private bool _buildOnStart;
 
@@ -26,19 +25,28 @@ namespace ProceduralModeling {
 		}
 
 		public void Rebuild() {
-			if(Filter.sharedMesh != null) {
-				if(Application.isPlaying) {
-					Destroy(Filter.sharedMesh);
-				} else {
-					DestroyImmediate(Filter.sharedMesh);
+			BuildTree((mesh) =>
+			{
+				if (Filter.sharedMesh != null)
+				{
+					if (Application.isPlaying)
+					{
+						Destroy(Filter.sharedMesh);
+					}
+					else
+					{
+						DestroyImmediate(Filter.sharedMesh);
+					}
 				}
-			} 
-			Filter.sharedMesh = Build();
+
+				Filter.sharedMesh = mesh;
+			});
 		}
 
 		protected abstract Mesh Build();
 
 		public abstract TreeBranch BuildData();
+		public abstract void BuildTree(System.Action<Mesh> cb);
 
 	}
 		

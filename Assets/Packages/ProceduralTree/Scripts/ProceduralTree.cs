@@ -1,23 +1,178 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ProceduralModeling {
+	public struct MeshData
+	{
+		public Vector3[] vertices, normals;
+		public Vector4[] tangents;
+		public Vector2[] uvs;
+		public int[] triangles;
+	}
 
 	public class ProceduralTree : ProceduralModelingBase {
 
+		public event Action Rebuilt;
 		public TreeData Data { get { return data; } }
+		public Transform _sphere;
 		[SerializeField] TreeData data;
 		[SerializeField, Range(2, 8)] protected int generations = 5;
 		[SerializeField, Range(0.5f, 5f)] protected float length = 1f;
 		[SerializeField, Range(0.1f, 2f)] protected float radius = 0.15f;
 		
 		private TreeBranch _treeRoot;
-
+		private Coroutine _buildRoutine;
 		public TreeBranch TreeRoot => _treeRoot;
-		
+
 		const float PI2 = Mathf.PI * 2f;
+		
+		// void Update()
+		// {
+		// 	data.randomSeed = UnityEngine.Random.Range(1, 100);
+		// 	Rebuild();
+
+		// 	_sphere.transform.position = Vector3.Lerp(new Vector3(-3, 15, 3), new Vector3(3, 15, -3), Mathf.Sin(Time.time));
+		// }
+		
+		public override void BuildTree(Action<Mesh> cb)
+		{
+			if(_buildRoutine == null)
+			{
+				data.tempTargetPosition = data.targetPoint.position;
+				_buildRoutine = StartCoroutine(BuildTreeRoutine((mesh) =>
+				{
+					cb?.Invoke(mesh);
+					Rebuilt?.Invoke();
+				}));
+			}
+		}
+		
+		public IEnumerator BuildTreeRoutine(Action<Mesh> postGen)
+		{
+			bool genFinished = false;
+			MeshData meshData = new MeshData();
+			
+			Task<MeshData>.Run(() => BuildAsync(data, generations, length, radius, true)).ContinueWith((task) => 
+			{
+				genFinished = true;
+				meshData = task.Result;
+			});
+
+			yield return new WaitUntil(() => genFinished);
+			
+			Mesh mesh = null;
+
+			mesh = new Mesh();
+			mesh.vertices = meshData.vertices;
+			mesh.normals = meshData.normals;
+			mesh.tangents = meshData.tangents;
+			mesh.uv = meshData.uvs;
+			mesh.triangles = meshData.triangles;
+			_buildRoutine = null;
+			postGen?.Invoke(mesh);
+		}
+
+		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen) {
+			data.Setup();
+
+			var root = new TreeBranch(
+				generations, 
+				length, 
+				radius, 
+				data
+			);
+
+			List<Vector3> vertices = null, normals = null;
+			List<Vector4> tangents = null;
+			List<Vector2> uvs = null;
+			List<int> triangles = null;
+			
+			if (meshGen)
+			{
+				vertices = new List<Vector3>();
+				normals = new List<Vector3>();
+				tangents = new List<Vector4>();
+				uvs = new List<Vector2>();
+				triangles = new List<int>();
+			}
+			
+			float maxLength = TraverseMaxLength(root);
+
+			Traverse(root, (branch) => {
+				var offset = 0;
+				if (meshGen)
+				{
+					offset = vertices.Count;
+				}
+
+				var vOffset = branch.Offset / maxLength;
+				var vLength = branch.Length / maxLength;
+
+				for(int i = 0, n = branch.Segments.Count; i < n; i++) {
+					var t = 1f * i / (n - 1);
+					var v = vOffset + vLength * t;
+
+					var segment = branch.Segments[i];
+					var N = segment.Frame.Normal;
+					var B = segment.Frame.Binormal;
+
+					if (meshGen)
+					{
+						for (int j = 0; j <= data.radialSegments; j++)
+						{
+							// 0.0 ~ 2π
+							var u = 1f * j / data.radialSegments;
+							float rad = u * PI2;
+
+							float cos = Mathf.Cos(rad), sin = Mathf.Sin(rad);
+							var normal = (cos * N + sin * B).normalized;
+							vertices.Add(segment.Position + segment.Radius * normal);
+							normals.Add(normal);
+
+							var tangent = segment.Frame.Tangent;
+							tangents.Add(new Vector4(tangent.x, tangent.y, tangent.z, 0f));
+
+							uvs.Add(new Vector2(u, v));
+						}
+					}
+				}
+
+				if (meshGen)
+				{
+					for (int j = 1; j <= data.heightSegments; j++)
+					{
+						for (int i = 1; i <= data.radialSegments; i++)
+						{
+							int a = (data.radialSegments + 1) * (j - 1) + (i - 1);
+							int b = (data.radialSegments + 1) * j + (i - 1);
+							int c = (data.radialSegments + 1) * j + i;
+							int d = (data.radialSegments + 1) * (j - 1) + i;
+
+							a += offset;
+							b += offset;
+							c += offset;
+							d += offset;
+
+							triangles.Add(a); triangles.Add(d); triangles.Add(b);
+							triangles.Add(b); triangles.Add(d); triangles.Add(c);
+						}
+					}
+				}
+			});
+
+			MeshData meshData = new MeshData();
+
+			meshData.vertices = vertices.ToArray();
+			meshData.normals = normals.ToArray();
+			meshData.tangents = tangents.ToArray();
+			meshData.uvs = uvs.ToArray();
+			meshData.triangles = triangles.ToArray();
+
+			return meshData;
+		}
 
 		public static Mesh Build(TreeData data, int generations, float length, float radius, bool meshGen, out TreeBranch root) {
 			data.Setup();
@@ -172,6 +327,7 @@ namespace ProceduralModeling {
 		[Range(4, 20)] public int heightSegments = 10, radialSegments = 8;
 		[Range(0.0f, 0.35f)] public float bendDegree = 0.1f;
 		public Transform targetPoint;
+		public Vector3 tempTargetPosition;
 		[Range(0f, 1f)] public float targetBias;
 		Rand rnd;
 
@@ -197,14 +353,6 @@ namespace ProceduralModeling {
 
 		public float GetRandomBendDegree() {
 			return rnd.Range(-bendDegree, bendDegree);
-		}
-
-		public float GetGrowthAngleTowardsTarget(Vector3 from)
-		{
-			var randomGrowthAngle = GetRandomGrowthAngle();
-			var direction = (targetPoint.position - from).normalized;
-			
-			return randomGrowthAngle;
 		}
 	}
 
@@ -239,7 +387,7 @@ namespace ProceduralModeling {
 			this.toRadius = (generation == 0) ? 0f : radius * data.radiusAttenuation;
 
 			this.from = from;
-			var direction = (data.targetPoint.position - from).normalized;
+			var direction = (data.tempTargetPosition - from).normalized;
             var scale = Mathf.Lerp(1f, data.growthAngleScale, 1f - 1f * generation / generations);
             // var rotation = Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), normal) * Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), binormal);
             var rotation = Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), normal) * Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), binormal);
