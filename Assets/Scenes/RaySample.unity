@@ -402,8 +402,8 @@ MonoBehaviour:
   _sliceId: 0
   _lastSliceTime: -3.4028235e+38
   delayBetweenSlices: 1
---- !u!65 &785269804
-BoxCollider:
+--- !u!64 &785269810
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -420,9 +420,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.220094, y: 4.16, z: 2.406951}
-  m_Center: {x: -0.056028366, y: 2.0012307, z: -0.18029284}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1091401139}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,7 +742,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1856826850138188, guid: 1176b6e8bdb4243c89985522eca2e63e,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 785269804}
+      addedObject: {fileID: 785269810}
   m_SourcePrefab: {fileID: 100100000, guid: 1176b6e8bdb4243c89985522eca2e63e, type: 3}
 --- !u!1 &1423761519
 GameObject:

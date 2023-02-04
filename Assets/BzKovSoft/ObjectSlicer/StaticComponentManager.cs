@@ -48,7 +48,7 @@ namespace BzKovSoft.ObjectSlicer
 		{
 			var cldrsA = new List<Collider>();
 			var cldrsB = new List<Collider>();
-			RepairColliders(resultObjNeg, resultObjPos, cldrsA, cldrsB);
+			//RepairColliders(resultObjNeg, resultObjPos, cldrsA, cldrsB);
 		}
 
 		protected void RepairColliders(GameObject resultNeg, GameObject resultPos,
@@ -78,11 +78,11 @@ namespace BzKovSoft.ObjectSlicer
 					Physics.IgnoreCollision(colliderNeg, colliderPos, true);
 					var actionNeg = new Action(() =>
 					{
-						AddCollider(SlicedColliderNeg, goNeg, colliderNeg);
+						//AddCollider(SlicedColliderNeg, goNeg, colliderNeg);
 					});
 					var actionPos = new Action(() =>
 					{
-						AddCollider(SlicedColliderPos, goPos, colliderPos);
+						//AddCollider(SlicedColliderPos, goPos, colliderPos);
 					});
 
 					if (lazyRunnerNeg != null)
@@ -118,18 +118,18 @@ namespace BzKovSoft.ObjectSlicer
 			Profiler.EndSample();
 		}
 
-		private static void AddCollider(MeshColliderConf colliderConf, GameObject go, Collider originalCollider)
-		{
-			Profiler.BeginSample("Action: AddCollider");
-
-			UnityEngine.Object.Destroy(originalCollider);
-			var collider = go.AddComponent<MeshCollider>();
-			collider.sharedMaterial = colliderConf.Material;
-			collider.convex = true;
-			collider.sharedMesh = colliderConf.Mesh;
-
-			Profiler.EndSample();
-		}
+		// private static void AddCollider(MeshColliderConf colliderConf, GameObject go, Collider originalCollider)
+		// {
+		// 	Profiler.BeginSample("Action: AddCollider");
+		//
+		// 	UnityEngine.Object.Destroy(originalCollider);
+		// 	var collider = go.AddComponent<MeshCollider>();
+		// 	collider.sharedMaterial = colliderConf.Material;
+		// 	collider.convex = true;
+		// 	collider.sharedMesh = colliderConf.Mesh;
+		//
+		// 	Profiler.EndSample();
+		// }
 
 		private static ColliderSliceResult[] SliceColliders(Plane plane, Collider[] colliders)
 		{

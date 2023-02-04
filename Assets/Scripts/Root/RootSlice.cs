@@ -128,6 +128,8 @@ namespace MrRoot.Root
 			Plane plane = new Plane(normal, point);
 
 			Slice(plane, _sliceID++, null);
+			
+			
 		}
 
 		private void OnResult(BzSliceTryResult result)

@@ -24,7 +24,7 @@ namespace BzKovSoft.CharacterSlicer
 			var cldrsL = new List<Collider>();
 			var cldrsR = new List<Collider>();
 
-			RepairColliders(resultObjNeg, resultObjPos, cldrsL, cldrsR);
+			//RepairColliders(resultObjNeg, resultObjPos, cldrsL, cldrsR);
 
 			OnCompletePerSide(cldrsL, resultObjNeg);
 			OnCompletePerSide(cldrsR, resultObjPos);
