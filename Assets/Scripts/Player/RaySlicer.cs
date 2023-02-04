@@ -9,6 +9,8 @@ namespace MrRoot.Player
 {
     public class RaySlicer : MonoBehaviour
     {
+        public static event Action FlagHit;
+
         private MrRootInput _input;
 
         [ReadOnly] [SerializeField] private bool _pressed;
@@ -60,6 +62,9 @@ namespace MrRoot.Player
 
         private void FixedUpdate()
         {
+            if (!_pressed)
+                return;
+            
             var ray = MainCamera.ScreenPointToRay(_position);
 
             if (Physics.Raycast(ray, out var planeHit, LayerMask.GetMask("Water")))
@@ -70,6 +75,15 @@ namespace MrRoot.Player
             if (Physics.Raycast(ray, out var rootHit, LayerMask.GetMask("Root")))
             {
                 // todo: get root and cut
+            }
+            
+            if (Physics.Raycast(ray, out var flagHit, LayerMask.GetMask("Flag")))
+            {
+                if (!flagHit.collider.TryGetComponent<FlagBehaviour>(out var flag))
+                    return;
+                
+                Debug.Log("Flag Hit");
+                FlagHit?.Invoke();
             }
         }
     }
