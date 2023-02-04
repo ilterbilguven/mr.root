@@ -11,6 +11,7 @@ namespace ProceduralModeling {
 		public Vector4[] tangents;
 		public Vector2[] uvs;
 		public int[] triangles;
+		public TreeBranch root;
 	}
 
 	public class ProceduralTree : ProceduralModelingBase {
@@ -20,7 +21,7 @@ namespace ProceduralModeling {
 		public Transform _sphere;
 		[SerializeField] TreeData data;
 		[SerializeField, Range(2, 8)] protected int generations = 5;
-		[SerializeField, Range(0.5f, 5f)] protected float length = 1f;
+		[SerializeField, Range(0.5f, 5f)] public float length = 1f;
 		[SerializeField, Range(0.1f, 2f)] protected float radius = 0.15f;
 		
 		private TreeBranch _treeRoot;
@@ -59,6 +60,7 @@ namespace ProceduralModeling {
 			{
 				genFinished = true;
 				meshData = task.Result;
+				_treeRoot = meshData.root;
 			});
 
 			yield return new WaitUntil(() => genFinished);
@@ -170,6 +172,7 @@ namespace ProceduralModeling {
 			meshData.tangents = tangents.ToArray();
 			meshData.uvs = uvs.ToArray();
 			meshData.triangles = triangles.ToArray();
+			meshData.root = root;
 
 			return meshData;
 		}
@@ -373,7 +376,7 @@ namespace ProceduralModeling {
 
 		Vector3 from, to;
 		float fromRadius, toRadius;
-		float length;
+		public float length;
 		float offset;
 
 		// for Root branch constructor
