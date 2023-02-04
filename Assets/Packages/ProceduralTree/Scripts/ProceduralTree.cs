@@ -80,7 +80,7 @@ namespace ProceduralModeling {
 			postGen?.Invoke(mesh);
 		}
 
-		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen) {
+		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen, Vector3 tangent) {
 			Thread.CurrentThread.Name = "ProcTreeBuilder";
 			data.Setup();
 
