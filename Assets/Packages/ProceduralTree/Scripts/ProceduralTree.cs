@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -9,8 +7,7 @@ namespace ProceduralModeling {
 
 	public class ProceduralTree : ProceduralModelingBase {
 
-		public TreeData Data { get { return data; } } 
-
+		public TreeData Data { get { return data; } }
 		[SerializeField] TreeData data;
 		[SerializeField, Range(2, 8)] protected int generations = 5;
 		[SerializeField, Range(0.5f, 5f)] protected float length = 1f;
@@ -128,7 +125,8 @@ namespace ProceduralModeling {
         [Range(0f, 45f)] public float branchingAngle = 15f;
 		[Range(4, 20)] public int heightSegments = 10, radialSegments = 8;
 		[Range(0.0f, 0.35f)] public float bendDegree = 0.1f;
-
+		public Transform targetPoint;
+		[Range(0f, 1f)] public float targetBias;
 		Rand rnd;
 
 		public void Setup() {
@@ -153,6 +151,14 @@ namespace ProceduralModeling {
 
 		public float GetRandomBendDegree() {
 			return rnd.Range(-bendDegree, bendDegree);
+		}
+
+		public float GetGrowthAngleTowardsTarget(Vector3 from)
+		{
+			var randomGrowthAngle = GetRandomGrowthAngle();
+			var direction = (targetPoint.position - from).normalized;
+			
+			return randomGrowthAngle;
 		}
 	}
 
@@ -187,12 +193,15 @@ namespace ProceduralModeling {
 			this.toRadius = (generation == 0) ? 0f : radius * data.radiusAttenuation;
 
 			this.from = from;
-
+			var direction = (data.targetPoint.position - from).normalized;
             var scale = Mathf.Lerp(1f, data.growthAngleScale, 1f - 1f * generation / generations);
+            // var rotation = Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), normal) * Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), binormal);
             var rotation = Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), normal) * Quaternion.AngleAxis(scale * data.GetRandomGrowthAngle(), binormal);
+            rotation.SetFromToRotation(from, direction);
             this.to = from + rotation * tangent * length;
 
-			this.length = length;
+
+            this.length = length;
 			this.offset = offset;
 
 			segments = BuildSegments(data, fromRadius, toRadius, normal, binormal);
