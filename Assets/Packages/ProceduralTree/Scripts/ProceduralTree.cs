@@ -18,26 +18,17 @@ namespace ProceduralModeling {
 
 		public event Action Rebuilt;
 		public TreeData Data { get { return data; } }
-		public Transform _sphere;
 		[SerializeField] TreeData data;
-		[SerializeField, Range(2, 8)] protected int generations = 5;
-		[SerializeField, Range(0.5f, 5f)] public float length = 1f;
-		[SerializeField, Range(0.1f, 2f)] protected float radius = 0.15f;
+		[SerializeField, Range(2, 18)] protected int generations = 5;
+		[SerializeField, Range(0.5f, 50f)] public float length = 1f;
+		[SerializeField, Range(0.1f, 20f)] protected float radius = 0.15f;
 		
 		private TreeBranch _treeRoot;
 		private Coroutine _buildRoutine;
 		public TreeBranch TreeRoot => _treeRoot;
 
 		const float PI2 = Mathf.PI * 2f;
-		
-		// void Update()
-		// {
-		// 	data.randomSeed = UnityEngine.Random.Range(1, 100);
-		// 	Rebuild();
 
-		// 	_sphere.transform.position = Vector3.Lerp(new Vector3(-3, 15, 3), new Vector3(3, 15, -3), Mathf.Sin(Time.time));
-		// }
-		
 		public override void BuildTree(Action<Mesh> cb)
 		{
 			if(_buildRoutine == null)
@@ -55,8 +46,12 @@ namespace ProceduralModeling {
 		{
 			bool genFinished = false;
 			MeshData meshData = new MeshData();
-			
-			Task<MeshData>.Run(() => BuildAsync(data, generations, length, radius, true)).ContinueWith((task) => 
+
+			var target = data.targetPoint.position - transform.position;
+			target = target.normalized;
+
+
+			Task<MeshData>.Run(() => BuildAsync(data, generations, length, radius, true, target)).ContinueWith((task) => 
 			{
 				genFinished = true;
 				meshData = task.Result;
@@ -77,14 +72,15 @@ namespace ProceduralModeling {
 			postGen?.Invoke(mesh);
 		}
 
-		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen) {
+		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen, Vector3 tangent) {
 			data.Setup();
 
 			var root = new TreeBranch(
 				generations, 
 				length, 
 				radius, 
-				data
+				data,
+				tangent
 			);
 
 			List<Vector3> vertices = null, normals = null;
@@ -177,14 +173,15 @@ namespace ProceduralModeling {
 			return meshData;
 		}
 
-		public static Mesh Build(TreeData data, int generations, float length, float radius, bool meshGen, out TreeBranch root) {
+		public static Mesh Build(TreeData data, int generations, float length, float radius, bool meshGen, out TreeBranch root, Vector3 tangent) {
 			data.Setup();
 
 			root = new TreeBranch(
 				generations, 
 				length, 
 				radius, 
-				data
+				data,
+				tangent
 			);
 
 			List<Vector3> vertices = null, normals = null;
@@ -282,7 +279,7 @@ namespace ProceduralModeling {
 		public override TreeBranch BuildData ()
 		{
 			TreeBranch root;
-			Build(data, generations, length, radius, false, out root);
+			Build(data, generations, length, radius, false, out root, Vector3.up);
 
 			Debug.Log($"root: {root.Children.Count}");
 			return root;
@@ -291,7 +288,7 @@ namespace ProceduralModeling {
 		protected override Mesh Build ()
 		{
 			TreeBranch root;
-			var mesh = Build(data, generations, length, radius, true, out root);
+			var mesh = Build(data, generations, length, radius, true, out root, Vector3.up);
 
 			_treeRoot = root;
 
@@ -380,7 +377,7 @@ namespace ProceduralModeling {
 		float offset;
 
 		// for Root branch constructor
-		public TreeBranch(int generation, float length, float radius, TreeData data) : this(new List<TreeBranch>(), generation, generation, Vector3.zero, Vector3.up, Vector3.right, Vector3.back, length, radius, 0f, data) {
+		public TreeBranch(int generation, float length, float radius, TreeData data, Vector3 tangent) : this(new List<TreeBranch>(), generation, generation, Vector3.zero, tangent, Vector3.right, Vector3.back, length, radius, 0f, data) {
 		}
 
 		protected TreeBranch(List<TreeBranch> branches, int generation, int generations, Vector3 from, Vector3 tangent, Vector3 normal, Vector3 binormal, float length, float radius, float offset, TreeData data) {

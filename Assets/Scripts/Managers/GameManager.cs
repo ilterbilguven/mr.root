@@ -14,7 +14,7 @@ namespace MrRoot.Managers
         public event Action<bool> GameOver;
         public int SessionTime = 60;
         public List<Building> Buildings = new List<Building>();
-        [field: SerializeField] [ReadOnly] public bool IsGameOver { get; private set; }
+        [field: SerializeField] [field: ReadOnly] public bool IsGameOver { get; private set; }
         [ReadOnly] [SerializeField] private int _buildingCount;
         
 
