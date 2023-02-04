@@ -11,6 +11,8 @@ namespace MrRoot.Player
 {
     public class RaySlicer : MonoBehaviour
     {
+        public static event Action FlagHit; 
+
         private MrRootInput _input;
 
         [ReadOnly] [SerializeField] private bool _pressed;
@@ -63,9 +65,21 @@ namespace MrRoot.Player
 
         private void FixedUpdate()
         {
+            if (!_pressed)
+                return;
+            
             var ray = MainCamera.ScreenPointToRay(_screenPosition);
             
-
+            if (Physics.Raycast(ray, out var flagHit, LayerMask.GetMask("Flag")))
+            {
+                if (!flagHit.collider.TryGetComponent<FlagBehaviour>(out var flag))
+                    return;
+                
+                Debug.Log("Flag Hit");
+                FlagHit?.Invoke();
+                return;
+            }
+            
             if (Physics.Raycast(ray, out var planeHit, 1000f, LayerMask.GetMask("Water")))
             {
                 _previousWorldPosition = transform.position;
@@ -84,6 +98,7 @@ namespace MrRoot.Player
                     }
                 }
             }
+
         }
         
         public void DrawPlane(Vector3 position, Vector3 normal)
@@ -107,5 +122,7 @@ namespace MrRoot.Player
             Debug.DrawLine(corner3, corner0, Color.green, 1f);
             Debug.DrawRay(position, normal, Color.red, 1f);
         }
+        
+        
     }
 }
