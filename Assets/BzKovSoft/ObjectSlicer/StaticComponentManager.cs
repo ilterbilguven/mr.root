@@ -118,18 +118,18 @@ namespace BzKovSoft.ObjectSlicer
 			Profiler.EndSample();
 		}
 
-		// private static void AddCollider(MeshColliderConf colliderConf, GameObject go, Collider originalCollider)
-		// {
-		// 	Profiler.BeginSample("Action: AddCollider");
-		//
-		// 	UnityEngine.Object.Destroy(originalCollider);
-		// 	var collider = go.AddComponent<MeshCollider>();
-		// 	collider.sharedMaterial = colliderConf.Material;
-		// 	collider.convex = true;
-		// 	collider.sharedMesh = colliderConf.Mesh;
-		//
-		// 	Profiler.EndSample();
-		// }
+		private static void AddCollider(MeshColliderConf colliderConf, GameObject go, Collider originalCollider)
+		{
+			Profiler.BeginSample("Action: AddCollider");
+		
+			UnityEngine.Object.Destroy(originalCollider);
+			var collider = go.AddComponent<MeshCollider>();
+			collider.sharedMaterial = colliderConf.Material;
+			collider.convex = true;
+			collider.sharedMesh = colliderConf.Mesh;
+		
+			Profiler.EndSample();
+		}
 
 		private static ColliderSliceResult[] SliceColliders(Plane plane, Collider[] colliders)
 		{

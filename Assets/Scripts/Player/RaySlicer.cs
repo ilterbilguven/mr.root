@@ -22,7 +22,7 @@ namespace MrRoot.Player
 
         private Camera _mainCamera;
         private Camera MainCamera => _mainCamera ??= Camera.main;
-
+	
         private void Start()
         {
             _input = new MrRootInput();
@@ -94,9 +94,11 @@ namespace MrRoot.Player
                         
                         DrawPlane(rootHit.point, normal);
                     
+						Destroy(rootSlice.GetComponent<MeshCollider>());
+						Destroy(rootSlice.GetComponent<ProceduralModeling.ProceduralTree>());
                         rootSlice.Slice(normal, rootHit.point);
-                        //rootSlice.RollBack(rootHit.point);
-                    }
+						//rootSlice.RollBack(rootHit.point);
+					}
                 }
             }
         }

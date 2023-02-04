@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -17,26 +18,23 @@ namespace ProceduralModeling {
 
 		public event Action Rebuilt;
 		public TreeData Data { get { return data; } }
-		public Transform _sphere;
 		[SerializeField] TreeData data;
 		[SerializeField, Range(2, 8)] protected int generations = 5;
 		[SerializeField, Range(0.5f, 5f)] protected float length = 1f;
 		[SerializeField, Range(0.1f, 2f)] protected float radius = 0.15f;
-		
+		[SerializeField] private MeshCollider _col;
+
 		private TreeBranch _treeRoot;
 		private Coroutine _buildRoutine;
 		public TreeBranch TreeRoot => _treeRoot;
 
 		const float PI2 = Mathf.PI * 2f;
 		
-		// void Update()
-		// {
-		// 	data.randomSeed = UnityEngine.Random.Range(1, 100);
-		// 	Rebuild();
-
-		// 	_sphere.transform.position = Vector3.Lerp(new Vector3(-3, 15, 3), new Vector3(3, 15, -3), Mathf.Sin(Time.time));
-		// }
-		
+		void Update()
+		{
+			Rebuild();
+			data.targetPoint.position = Vector3.Lerp(Vector3.zero, new Vector3(5, 0, 5), Mathf.Abs(Mathf.Sin(Time.time)));
+		}
 		public override void BuildTree(Action<Mesh> cb)
 		{
 			if(_buildRoutine == null)
@@ -46,6 +44,7 @@ namespace ProceduralModeling {
 				{
 					cb?.Invoke(mesh);
 					Rebuilt?.Invoke();
+					_col.sharedMesh = Filter.sharedMesh;
 				}));
 			}
 		}
@@ -76,6 +75,7 @@ namespace ProceduralModeling {
 		}
 
 		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen) {
+			Thread.CurrentThread.Name = "ProcTreeBuilder";
 			data.Setup();
 
 			var root = new TreeBranch(
