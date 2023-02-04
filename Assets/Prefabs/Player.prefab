@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1519083340571082748}
   - component: {fileID: 6906695902319408136}
   - component: {fileID: 1530283252}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pressed: 0
-  _position: {x: 0, y: 0}
+  _screenPosition: {x: 0, y: 0}
+  _previousWorldPosition: {x: 0, y: 0, z: 0}
 --- !u!96 &1530283252
 TrailRenderer:
   serializedVersion: 3

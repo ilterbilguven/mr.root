@@ -67,10 +67,10 @@ namespace MrRoot.Player
         {
             if (!_pressed)
                 return;
-            
+
             var ray = MainCamera.ScreenPointToRay(_screenPosition);
             
-            if (Physics.Raycast(ray, out var flagHit, LayerMask.GetMask("Flag")))
+            if (Physics.Raycast(ray, out var flagHit, 100f, LayerMask.GetMask("Flag")))
             {
                 if (!flagHit.collider.TryGetComponent<FlagBehaviour>(out var flag))
                     return;
@@ -98,7 +98,6 @@ namespace MrRoot.Player
                     }
                 }
             }
-
         }
         
         public void DrawPlane(Vector3 position, Vector3 normal)
