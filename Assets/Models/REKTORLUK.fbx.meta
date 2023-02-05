@@ -3,7 +3,37 @@ guid: 9b7f2d64a4d12554cb6f653d1919a69c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: black
+    second: {fileID: 2100000, guid: 63925744f4e0bc5428fa25cb76bc528b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass_mat
+    second: {fileID: 2100000, guid: a8adc0b5464a82741ac2a48cd6b5a742, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: gray_mat
+    second: {fileID: 2100000, guid: ac71c659dd3c8ba42ae20d254b4821a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lambert1
+    second: {fileID: 2100000, guid: 9432667d3de2faa40b734b8b72d7a2cf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: red_mat
+    second: {fileID: 2100000, guid: a8828c90ef6a6c34383b8097826b5c9a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: toned_mat
+    second: {fileID: 2100000, guid: 126b5c8c9a7f4fe4687fff2ca1e22a0f, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
