@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 1080873837960182537}
   - component: {fileID: 2597359165844061585}
   - component: {fileID: -1230800917637507997}
-  m_Layer: 6
+  - component: {fileID: -3101817153601765900}
+  - component: {fileID: -6119439992614128849}
+  m_Layer: 3
   m_Name: EnemyRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a93e0d0e2180c448baa7817740091300, type: 2}
+  - {fileID: 2100000, guid: a470e8a48d8ee8146bfcabfa01be206d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -117,6 +119,7 @@ MonoBehaviour:
   generations: 8
   length: 5
   radius: 0.17
+  _col: {fileID: 0}
 --- !u!114 &-1230800917637507997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,3 +132,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 105cea22439446ab90e32a8c6acee129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!64 &-3101817153601765900
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4467645408558642249}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
+--- !u!114 &-6119439992614128849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4467645408558642249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87878abade571442eab3c98790110d53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultSliceMaterial: {fileID: 2100000, guid: a470e8a48d8ee8146bfcabfa01be206d,
+    type: 2}
+  asynchronously: 0
+  useLazyRunner: 0
+  _sliceId: 0
+  _lastSliceTime: -3.4028235e+38
+  delayBetweenSlices: 1

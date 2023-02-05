@@ -30,12 +30,12 @@ namespace ProceduralModeling {
 		public TreeBranch TreeRoot => _treeRoot;
 
 		const float PI2 = Mathf.PI * 2f;
-		
-		void Update()
+
+		private void Awake()
 		{
-			Rebuild();
-			data.targetPoint.position = Vector3.Lerp(Vector3.zero, new Vector3(5, 0, 5), Mathf.Abs(Mathf.Sin(Time.time)));
+			TryGetComponent(out _col);
 		}
+
 		public override void BuildTree(Action<Mesh> cb)
 		{
 			if(_buildRoutine == null)
