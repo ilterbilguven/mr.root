@@ -102,7 +102,7 @@ MonoBehaviour:
   _buildOnStart: 0
   data:
     randomSeed: 187
-    lengthAttenuation: 0.725
+    lengthAttenuation: 0.565
     radiusAttenuation: 0.614
     branchesMin: 1
     branchesMax: 2

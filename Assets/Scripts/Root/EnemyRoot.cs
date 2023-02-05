@@ -11,11 +11,9 @@ namespace MrRoot.Root
 	{
 		private ProceduralTree _tree;
 		private Renderer _renderer;
-		
-		private List<Tweener> _tweens = new List<Tweener>();
-
 		private Transform _target;
-		private float _duration = 4f;
+		private List<Tweener> _tweens = new List<Tweener>();
+		private float _duration;
 
 		private void Awake()
 		{
@@ -27,9 +25,8 @@ namespace MrRoot.Root
 		public void Initialize(Transform target, float duration)
 		{
 			_target = target;
-        
 			_tree.Data.targetPoint = target;
-			
+			_duration = duration;
 			_tree.Data.randomSeed = Random.Range(0, int.MaxValue);
 			_tree.Rebuild();
 			
