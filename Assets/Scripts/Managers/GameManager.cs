@@ -2,15 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using MrRoot.Root;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 namespace MrRoot.Managers
 {
     public class GameManager : SingletonBehaviour<GameManager>
     {
+        public event Action GameStarted; 
         public event Action<bool> GameOver;
         public int SessionTime = 60;
         public List<Building> Buildings = new List<Building>();
@@ -22,6 +25,17 @@ namespace MrRoot.Managers
             Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
         }
 
+        private IEnumerator Start()
+        {
+            
+            yield return new WaitForSeconds(3f);
+            
+            Initialize();
+            
+            
+            GameStarted?.Invoke();
+        }
+
 
         [Button]
         public void Initialize()
@@ -30,6 +44,8 @@ namespace MrRoot.Managers
             
             TimeManager.Instance.TimesUp += OnTimesUp;
             TimeManager.Instance.Initialize(SessionTime);
+            
+            EnemyManager.Instance.Initialize();
         }
 
         private void OnTimesUp()
@@ -82,6 +98,7 @@ namespace MrRoot.Managers
             
             IsGameOver = true;
             GameOver?.Invoke(true);
+            SceneManager.LoadScene(2);
         }
 
         private void Lose()
@@ -94,11 +111,7 @@ namespace MrRoot.Managers
             
             IsGameOver = true;
             GameOver?.Invoke(false);
-        }
-
-        private void OnBlackAndWhite(bool active)
-        {
-            throw new NotImplementedException();
+            SceneManager.LoadScene(3);
         }
     }
 }

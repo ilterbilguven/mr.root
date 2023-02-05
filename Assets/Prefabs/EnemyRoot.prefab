@@ -132,6 +132,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 105cea22439446ab90e32a8c6acee129, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transitionValue: 0
+  far: 0
+  _rollbackDuration: 0.5
 --- !u!64 &-3101817153601765900
 MeshCollider:
   m_ObjectHideFlags: 0

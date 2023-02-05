@@ -15,6 +15,12 @@ namespace MrRoot.Root
 		private List<Tweener> _tweens = new List<Tweener>();
 		private float _duration;
 
+		public static event Action RootCut;
+		public float transitionValue;
+		public bool far;
+
+		[SerializeField] private float _rollbackDuration;
+
 		private void Awake()
 		{
 			TryGetComponent(out _tree);
@@ -55,11 +61,24 @@ namespace MrRoot.Root
 
 			_tweens.Add(_renderer.material.DOFloat(1f, "_Transition", _duration).From(0f).OnComplete(() =>
 			{
+				if (!_target) return;
 				if (_target.TryGetComponent(out Building building))
 				{
 					building.Capture();
 				}
 			}));
+		}
+		public void RollBack(float start, float end)
+		{
+			foreach (var rendererMaterial in  _renderer.materials)
+			{
+				rendererMaterial.DOFloat(end, "_Transition", _rollbackDuration).From(start);
+			}
+		}
+
+		public void DestroyedObject(GameObject obje)
+		{
+			obje.transform.DOLocalMoveY(-10f, 2f);
 		}
 
 		public void Cut()
@@ -68,6 +87,8 @@ namespace MrRoot.Root
 			{
 				tweener.Kill();
 			}
+			
+			RootCut?.Invoke();
 		}
 	}
 }
