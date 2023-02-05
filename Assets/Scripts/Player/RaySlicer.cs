@@ -121,7 +121,6 @@ namespace MrRoot.Player
                 {
                     if (rootHit.transform.TryGetComponent(out RootSlice rootSlice))
                     {   
-                        
                         var normal = Vector3.Cross(-velocity, Vector3.up);
                         
                         DrawPlane(rootHit.point, normal);
@@ -131,16 +130,22 @@ namespace MrRoot.Player
                         var targetPosition = procTree.Data.targetPoint.position;
                         var originPosition = procTree.transform.position;
                         var cutPosition = rootHit.point;
-
+                        
+                        
                         var transition = Vector3.Distance(cutPosition, originPosition) /
                                          Vector3.Distance(targetPosition, originPosition);
 
-                        rootSlice.GetComponent<EnemyRoot>().transitionValue = transition;
-                        Destroy(rootSlice.GetComponent<MeshCollider>());
-						Destroy(rootSlice.GetComponent<ProceduralModeling.ProceduralTree>());
-                        rootSlice.Slice(normal, rootHit.point);
-                        //rootSlice.RollBack(rootHit.point);
-					}
+                        var enemyRoot = rootSlice.GetComponent<EnemyRoot>();
+                        var actualTransition = enemyRoot._renderer.material.GetFloat("_Transition");
+                        if (actualTransition >= transition)
+                        {
+                            rootSlice.GetComponent<EnemyRoot>().transitionValue = transition;
+                            Destroy(rootSlice.GetComponent<MeshCollider>());
+                            Destroy(rootSlice.GetComponent<ProceduralModeling.ProceduralTree>());
+                            rootSlice.Slice(normal, rootHit.point);
+                            //rootSlice.RollBack(rootHit.point);
+                        }
+                    }
                 }
             }
         }
