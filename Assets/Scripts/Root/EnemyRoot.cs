@@ -24,9 +24,10 @@ namespace MrRoot.Root
 		public void Initialize(Transform target)
 		{
 			_tree.Data.targetPoint = target;
-			//_tree.Rebuild();
 			
 			_tree.Data.randomSeed = Random.Range(0, int.MaxValue);
+			_tree.Rebuild();
+			
 			Animate();
 		}
 		
@@ -39,16 +40,16 @@ namespace MrRoot.Root
 		[Button]
 		public void Animate()
 		{
-			_tweens.Add(DOVirtual.Float(0, 1, 2f, value =>
-			{
-				_tree.Data.targetBias = value;
-				_tree.Rebuild();
-			}));
-
-			_tweens.Add(DOVirtual.Float(0.5f, 4, 2f, value =>
-			{
-				_tree.length = value;
-			}));
+			// _tweens.Add(DOVirtual.Float(0, 1, 2f, value =>
+			// {
+			// 	_tree.Data.targetBias = value;
+			// 	_tree.Rebuild();
+			// }));
+			//
+			// _tweens.Add(DOVirtual.Float(0.5f, 4, 2f, value =>
+			// {
+			// 	_tree.length = value;
+			// }));
 
 			_tweens.Add(_renderer.material.DOFloat(1f, "_Transition", 2f).From(0f));
 		}

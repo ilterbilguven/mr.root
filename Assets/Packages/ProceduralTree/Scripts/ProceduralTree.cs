@@ -44,8 +44,9 @@ namespace ProceduralModeling {
 				_buildRoutine = StartCoroutine(BuildTreeRoutine((mesh) =>
 				{
 					cb?.Invoke(mesh);
+
 					Rebuilt?.Invoke();
-					_col.sharedMesh = Filter.sharedMesh;
+					//_col.sharedMesh = Filter.sharedMesh;
 				}));
 			}
 		}
@@ -59,13 +60,14 @@ namespace ProceduralModeling {
 			target = target.normalized;
 
 
-			Task<MeshData>.Run(() => BuildAsync(data, generations, length, radius, true, target)).ContinueWith((task) => 
+			var task = BuildAsync(data, generations, length, radius, true, target).ContinueWith((task) =>
 			{
 				genFinished = true;
 				meshData = task.Result;
 				_treeRoot = meshData.root;
+				Debug.Log(_treeRoot.Children.Count);
 			});
-
+			
 			yield return new WaitUntil(() => genFinished);
 			
 			Mesh mesh = null;
@@ -80,8 +82,8 @@ namespace ProceduralModeling {
 			postGen?.Invoke(mesh);
 		}
 
-		public async static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen, Vector3 tangent) {
-			Thread.CurrentThread.Name = "ProcTreeBuilder";
+		public static Task<MeshData> BuildAsync(TreeData data, int generations, float length, float radius, bool meshGen, Vector3 tangent) {
+			// Thread.CurrentThread.Name = "ProcTreeBuilder";
 			data.Setup();
 
 			var root = new TreeBranch(
@@ -179,7 +181,7 @@ namespace ProceduralModeling {
 			meshData.triangles = triangles.ToArray();
 			meshData.root = root;
 
-			return meshData;
+			return Task.FromResult(meshData);
 		}
 
 		public static Mesh Build(TreeData data, int generations, float length, float radius, bool meshGen, out TreeBranch root, Vector3 tangent) {

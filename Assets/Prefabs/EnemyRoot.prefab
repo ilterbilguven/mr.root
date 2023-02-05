@@ -35,7 +35,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6337324747878706499
 MeshFilter:
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a470e8a48d8ee8146bfcabfa01be206d, type: 2}
+  - {fileID: 2100000, guid: a93e0d0e2180c448baa7817740091300, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,12 +110,12 @@ MonoBehaviour:
     growthAngleMax: 8.8
     growthAngleScale: 1
     branchingAngle: 6.1
-    heightSegments: 9
-    radialSegments: 12
+    heightSegments: 5
+    radialSegments: 6
     bendDegree: 0.253
     targetPoint: {fileID: 0}
     tempTargetPosition: {x: 16.42, y: 14.32, z: 0.4554484}
-    targetBias: 0
+    targetBias: 0.77
   generations: 8
   length: 5
   radius: 0.17

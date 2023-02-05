@@ -11,6 +11,8 @@ using MrRoot.Managers;
 /// </summary>
 public partial class SROptions
 {
+	public int BuildingCount => GameManager.Instance.Buildings.Count;
+	
 	public void InitalizeGM()
 	{
 		GameManager.Instance.Initialize();

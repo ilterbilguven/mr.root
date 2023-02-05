@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Scripting;
+[assembly: AlwaysLinkAssembly]
 namespace ProceduralModeling {
 
 	[RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
