@@ -16,6 +16,7 @@ namespace MrRoot
         {
             _moveTween.Kill();
             var dist = Vector3.Distance(waypoint.Position, transform.position);
+            transform.LookAt(waypoint.Position);
             _moveTween = transform.DOMove(waypoint.Position, dist / _moveSpeed)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => WaypointReached?.Invoke(waypoint));

@@ -126,6 +126,12 @@ namespace MrRoot.Root
 		
 		public void Slice(Vector3 normal, Vector3 point)
 		{
+			if (TryGetComponent(out EnemyRoot enemyRoot))
+			{
+				enemyRoot.Cut();
+			}
+			
+			
 			_meshCollider.enabled = true;
 
 			_bound = point.y;
@@ -146,75 +152,31 @@ namespace MrRoot.Root
 			var material = rendererNeg.material;
 			result.outObjectPos.GetComponent<Renderer>().materials[0] = new Material(material);
 
+			
 			var negCenter = rendererNeg.bounds.center;
+			Debug.DrawLine(negCenter, negCenter + Vector3.up, Color.red, 15f);
 			var posCenter = rendererPos.bounds.center;
-
-			var negDist = Vector3.Distance(negCenter, result.outObjectNeg.transform.position);
-			var posDist = Vector3.Distance(posCenter, result.outObjectPos.transform.position);
+			Debug.DrawLine(posCenter, posCenter + Vector3.up, Color.yellow, 15f);
+			var negDist = Vector3.Distance(negCenter,  result.outObjectNeg.transform.position);
+			var posDist = Vector3.Distance(posCenter,  result.outObjectPos.transform.position);
 
 			float start = 0f, end = 0f;
 
-
-
-			if(result.outObjectNeg.TryGetComponent(out EnemyRoot enemyRoot))
+			if (negDist < posDist)
 			{
-				if (negDist < posDist)
+				if (result.outObjectNeg.TryGetComponent(out EnemyRoot enemyRoot))
 				{
-					if (result.outObjectNeg == gameObject)
-					{
-						start = enemyRoot.transitionValue;
-						end = 0f;
-					}
-					else
-					{
-						start = 1f;
-						end = enemyRoot.transitionValue;
-					}
+					enemyRoot.RollBack(enemyRoot.transitionValue, 0f);
+					enemyRoot.DestroyedObject(result.outObjectPos);
 				}
-				else
-				{
-					if (result.outObjectNeg == gameObject)
-					{
-						start = 1f;
-						end = enemyRoot.transitionValue;
-					}
-					else
-					{
-						start = enemyRoot.transitionValue;
-						end = 0f;
-					}
-				}
-				enemyRoot.RollBack(start, end);
 			}
-			if(result.outObjectPos.TryGetComponent(out EnemyRoot enemyRoot2))
+			else
 			{
-				if (negDist > posDist)
+				if (result.outObjectPos.TryGetComponent(out EnemyRoot enemyRoot2))
 				{
-					if (result.outObjectPos == gameObject)
-					{
-						start = enemyRoot2.transitionValue;
-						end = 0f;
-					}
-					else
-					{
-						start = 1f;
-						end = enemyRoot2.transitionValue;
-					}
+					enemyRoot2.RollBack(enemyRoot2.transitionValue, 0f);
+					enemyRoot2.DestroyedObject(result.outObjectNeg);
 				}
-				else
-				{
-					if (result.outObjectPos == gameObject)
-					{
-						start = 1f;
-						end = enemyRoot2.transitionValue;
-					}
-					else
-					{
-						start = enemyRoot2.transitionValue;
-						end = 0f;
-					}
-				}
-				enemyRoot2.RollBack(start, end);
 			}
 		}
 
