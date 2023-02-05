@@ -27,6 +27,7 @@ namespace MrRoot.Managers
             TimeManager.Instance.TimesUp += OnTimesUp;
             TimeManager.Instance.Initialize(SessionTime);
         }
+
         private void OnTimesUp()
         {
             TimeManager.Instance.TimesUp -= OnTimesUp;
@@ -89,6 +90,11 @@ namespace MrRoot.Managers
             
             IsGameOver = true;
             GameOver?.Invoke(false);
+        }
+
+        private void OnBlackAndWhite(bool active)
+        {
+            throw new NotImplementedException();
         }
     }
 }

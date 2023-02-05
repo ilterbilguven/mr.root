@@ -16,10 +16,10 @@ namespace MrRoot.Player
         private MrRootInput _input;
 
         [ReadOnly] [SerializeField] private bool _pressed;
+        [ReadOnly] [SerializeField] private bool _blackAndWhite;
         [ReadOnly] [SerializeField] private Vector2 _screenPosition;
         [ReadOnly] [SerializeField] private Vector3 _previousWorldPosition;
         
-
         private Camera _mainCamera;
         private Camera MainCamera => _mainCamera ??= Camera.main;
 
@@ -33,6 +33,8 @@ namespace MrRoot.Player
             _input.Player.Position.performed += OnPositionPerformed;
             
             _input.Player.Enable();
+            
+            PostProcessManager.BlackAndWhite += OnBlackAndWhite;
         }
         
         private void OnDestroy()
@@ -41,11 +43,13 @@ namespace MrRoot.Player
             _input.Player.Press.canceled -= OnPressCanceled;
             
             _input.Player.Position.performed -= OnPositionPerformed;
+            
+            PostProcessManager.BlackAndWhite -= OnBlackAndWhite;
         }
-        
+
         private void OnPositionPerformed(InputAction.CallbackContext obj)
         {
-            if (!_pressed)
+            if (!_pressed || _blackAndWhite)
             {
                 return;
             }
@@ -55,12 +59,25 @@ namespace MrRoot.Player
 
         private void OnPressCanceled(InputAction.CallbackContext obj)
         {
+            if (_blackAndWhite)
+                return;
+            
             _pressed = false;
         }
 
         private void OnPressPerformed(InputAction.CallbackContext obj)
         {
+            if (_blackAndWhite)
+                return;
+            
             _pressed = true;
+        }
+        
+        private void OnBlackAndWhite(bool active)
+        {
+            _blackAndWhite = active;
+            if(active)
+                _pressed = false;
         }
 
         private void FixedUpdate()
