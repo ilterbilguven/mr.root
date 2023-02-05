@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using BzKovSoft.ObjectSlicer;
 using BzKovSoft.ObjectSlicer.Samples;
+using DG.Tweening;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -15,6 +16,8 @@ namespace MrRoot.Root
 		[SerializeField] int _sliceId;
 		[HideInInspector]
 		[SerializeField] float _lastSliceTime = float.MinValue;
+
+		private float _bound;
 
 		private Collider _meshCollider;
 		private Renderer _renderer;
@@ -123,7 +126,9 @@ namespace MrRoot.Root
 		
 		public void Slice(Vector3 normal, Vector3 point)
 		{
-			_meshCollider.enabled = false;
+			_meshCollider.enabled = true;
+
+			_bound = point.y;
 			
 			Plane plane = new Plane(normal, point);
 
@@ -136,17 +141,83 @@ namespace MrRoot.Root
 		{
 			result.outObjectNeg.layer = LayerMask.NameToLayer("Ignore Raycast");
 			result.outObjectPos.layer = LayerMask.NameToLayer("Ignore Raycast");
-			var material = result.meshItems[0].rendererNeg.material;
-			result.meshItems[0].rendererPos.materials[0] = new Material(material);
+			var rendererNeg = result.outObjectNeg.GetComponent<Renderer>();
+			var rendererPos = result.outObjectPos.GetComponent<Renderer>();
+			var material = rendererNeg.material;
+			result.outObjectPos.GetComponent<Renderer>().materials[0] = new Material(material);
+
+			var negCenter = rendererNeg.bounds.center;
+			var posCenter = rendererPos.bounds.center;
+
+			var negDist = Vector3.Distance(negCenter, result.outObjectNeg.transform.position);
+			var posDist = Vector3.Distance(posCenter, result.outObjectPos.transform.position);
+
+			float start = 0f, end = 0f;
+
+
+
+			if(result.outObjectNeg.TryGetComponent(out EnemyRoot enemyRoot))
+			{
+				if (negDist < posDist)
+				{
+					if (result.outObjectNeg == gameObject)
+					{
+						start = enemyRoot.transitionValue;
+						end = 0f;
+					}
+					else
+					{
+						start = 1f;
+						end = enemyRoot.transitionValue;
+					}
+				}
+				else
+				{
+					if (result.outObjectNeg == gameObject)
+					{
+						start = 1f;
+						end = enemyRoot.transitionValue;
+					}
+					else
+					{
+						start = enemyRoot.transitionValue;
+						end = 0f;
+					}
+				}
+				enemyRoot.RollBack(start, end);
+			}
+			if(result.outObjectPos.TryGetComponent(out EnemyRoot enemyRoot2))
+			{
+				if (negDist > posDist)
+				{
+					if (result.outObjectPos == gameObject)
+					{
+						start = enemyRoot2.transitionValue;
+						end = 0f;
+					}
+					else
+					{
+						start = 1f;
+						end = enemyRoot2.transitionValue;
+					}
+				}
+				else
+				{
+					if (result.outObjectPos == gameObject)
+					{
+						start = 1f;
+						end = enemyRoot2.transitionValue;
+					}
+					else
+					{
+						start = enemyRoot2.transitionValue;
+						end = 0f;
+					}
+				}
+				enemyRoot2.RollBack(start, end);
+			}
 		}
 
-		// public void RollBack(Vector3 hitPoint)
-		// {
-		// 	
-		// 	var perc = (hitPoint.y - _meshCollider.bounds.min.y) / _meshCollider.bounds.size.y;
-		// 	_renderer.material.SetFloat("Transition",perc);
-		// }
-		
 
 		private bool _sliced;
 		

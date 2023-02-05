@@ -23,7 +23,7 @@ namespace ProceduralModeling {
 		[SerializeField, Range(2, 8)] protected int generations = 5;
 		[SerializeField, Range(0.5f, 50f)] public float length = 1f;
 		[SerializeField, Range(0.1f, 20f)] protected float radius = 0.15f;
-		[SerializeField] private Collider _col;
+		[SerializeField] private MeshCollider _col;
 
 		private TreeBranch _treeRoot;
 		private Coroutine _buildRoutine;
@@ -46,7 +46,7 @@ namespace ProceduralModeling {
 					cb?.Invoke(mesh);
 
 					Rebuilt?.Invoke();
-					//_col.sharedMesh = Filter.sharedMesh;
+					_col.sharedMesh = Filter.sharedMesh;
 				}));
 			}
 		}

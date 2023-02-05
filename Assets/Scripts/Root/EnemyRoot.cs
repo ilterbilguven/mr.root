@@ -15,6 +15,11 @@ namespace MrRoot.Root
 		private List<Tweener> _tweens = new List<Tweener>();
 		private float _duration;
 
+		public float transitionValue;
+		public bool far;
+
+		[SerializeField] private float _rollbackDuration;
+
 		private void Awake()
 		{
 			TryGetComponent(out _tree);
@@ -60,6 +65,15 @@ namespace MrRoot.Root
 					building.Capture();
 				}
 			}));
+		}
+		public void RollBack(float start, float end)
+		{
+			Cut();
+			foreach (var rendererMaterial in  _renderer.materials)
+			{
+
+				rendererMaterial.DOFloat(end, "_Transition", _rollbackDuration).From(start);
+			}
 		}
 
 		public void Cut()
