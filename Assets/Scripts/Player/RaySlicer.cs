@@ -19,10 +19,12 @@ namespace MrRoot.Player
         [ReadOnly] [SerializeField] private bool _blackAndWhite;
         [ReadOnly] [SerializeField] private Vector2 _screenPosition;
         [ReadOnly] [SerializeField] private Vector3 _previousWorldPosition;
+
+        private bool _firstTouch = true;
         
         private Camera _mainCamera;
         private Camera MainCamera => _mainCamera ??= Camera.main;
-
+	
         private void Start()
         {
             _input = new MrRootInput();
@@ -85,6 +87,8 @@ namespace MrRoot.Player
             if (!_pressed)
                 return;
 
+            
+
             var ray = MainCamera.ScreenPointToRay(_screenPosition);
             
             if (Physics.Raycast(ray, out var flagHit, 100f, LayerMask.GetMask("Flag")))
@@ -101,6 +105,16 @@ namespace MrRoot.Player
             {
                 _previousWorldPosition = transform.position;
                 transform.position = planeHit.point + Vector3.up;
+
+                if (_firstTouch)
+                {
+                    _firstTouch = false;
+                    if (TryGetComponent(out TrailRenderer trailRenderer))
+                    {
+                        trailRenderer.enabled = true;
+                    }
+                }
+                
                 var velocity = transform.position - _previousWorldPosition;
                 
                 if (Physics.Raycast(ray, out var rootHit, 1000f, LayerMask.GetMask("Root")))
@@ -111,9 +125,11 @@ namespace MrRoot.Player
                         
                         DrawPlane(rootHit.point, normal);
                     
+						Destroy(rootSlice.GetComponent<MeshCollider>());
+						Destroy(rootSlice.GetComponent<ProceduralModeling.ProceduralTree>());
                         rootSlice.Slice(normal, rootHit.point);
-                        //rootSlice.RollBack(rootHit.point);
-                    }
+						//rootSlice.RollBack(rootHit.point);
+					}
                 }
             }
         }

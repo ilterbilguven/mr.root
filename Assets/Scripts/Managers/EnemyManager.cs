@@ -1,21 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using MrRoot.Root;
+using ProceduralModeling;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace MrRoot.Managers
 {
-    public class EnemyManager : MonoBehaviour
+    public class EnemyManager : SingletonBehaviour<EnemyManager>
     {
-        // Start is called before the first frame update
-        void Start()
-        {
+
+        [SerializeField] private Transform _rootPoint;
+        [SerializeField] private EnemyRoot _rootPrefab;
         
+        [Button]
+        public void Initialize()
+        {
+                
         }
 
-        // Update is called once per frame
-        void Update()
+        [Button]
+        public void SpawnRoot()
         {
-        
+            var root = Instantiate(_rootPrefab);
+            root.Initialize(GetRandomAvailableBuilding());
         }
+
+        private Transform GetRandomAvailableBuilding()
+        {
+            var buildings = GameManager.Instance.Buildings;
+            
+            return buildings[Random.Range(0, buildings.Count)].transform;
+        }
+        
     }
 }

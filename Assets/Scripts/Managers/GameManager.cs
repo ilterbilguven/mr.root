@@ -14,15 +14,19 @@ namespace MrRoot.Managers
         public event Action<bool> GameOver;
         public int SessionTime = 60;
         public List<Building> Buildings = new List<Building>();
-        [field: SerializeField] [ReadOnly] public bool IsGameOver { get; private set; }
+        [field: SerializeField] [field: ReadOnly] public bool IsGameOver { get; private set; }
         [ReadOnly] [SerializeField] private int _buildingCount;
-        
+
+        private void Awake()
+        {
+            Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+        }
+
 
         [Button]
         public void Initialize()
         {
             _buildingCount = Buildings.Count;
-            Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
             
             TimeManager.Instance.TimesUp += OnTimesUp;
             TimeManager.Instance.Initialize(SessionTime);
