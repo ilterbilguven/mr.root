@@ -155,6 +155,7 @@ MonoBehaviour:
   _rootPoint: {fileID: 0}
   _rootPrefab: {fileID: -1230800917637507997, guid: caf8478314e134b70904e1b42000ead2,
     type: 3}
+  _durationRange: {x: 2, y: 10}
 --- !u!4 &242669062
 Transform:
   m_ObjectHideFlags: 0

@@ -65,7 +65,6 @@ namespace ProceduralModeling {
 				genFinished = true;
 				meshData = task.Result;
 				_treeRoot = meshData.root;
-				Debug.Log(_treeRoot.Children.Count);
 			});
 			
 			yield return new WaitUntil(() => genFinished);

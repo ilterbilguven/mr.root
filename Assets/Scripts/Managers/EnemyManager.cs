@@ -12,6 +12,9 @@ namespace MrRoot.Managers
 
         [SerializeField] private Transform _rootPoint;
         [SerializeField] private EnemyRoot _rootPrefab;
+
+        [MinMaxSlider(2f, 10f)] [SerializeField] private Vector2 _durationRange = new Vector2(2f, 10f);
+        
         
         [Button]
         public void Initialize()
@@ -23,7 +26,7 @@ namespace MrRoot.Managers
         public void SpawnRoot()
         {
             var root = Instantiate(_rootPrefab);
-            root.Initialize(GetRandomAvailableBuilding());
+            root.Initialize(GetRandomAvailableBuilding(), Random.Range(_durationRange.x, _durationRange.y));
         }
 
         private Transform GetRandomAvailableBuilding()

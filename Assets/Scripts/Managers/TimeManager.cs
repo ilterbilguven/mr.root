@@ -43,7 +43,7 @@ namespace MrRoot.Managers
                 yield return new WaitForFixedUpdate();
             } while (_stopwatch.Elapsed.TotalSeconds <= _sessionTime && !GameManager.Instance.IsGameOver);
             
-            TimesUp?.Invoke();
+            if (!GameManager.Instance.IsGameOver) TimesUp?.Invoke();
             
             _stopwatch.Stop();
         }

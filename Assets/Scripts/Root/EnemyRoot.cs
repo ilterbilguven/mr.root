@@ -14,6 +14,9 @@ namespace MrRoot.Root
 		
 		private List<Tweener> _tweens = new List<Tweener>();
 
+		private Transform _target;
+		private float _duration = 4f;
+
 		private void Awake()
 		{
 			TryGetComponent(out _tree);
@@ -21,8 +24,10 @@ namespace MrRoot.Root
         
 		}
 
-		public void Initialize(Transform target)
+		public void Initialize(Transform target, float duration)
 		{
+			_target = target;
+        
 			_tree.Data.targetPoint = target;
 			
 			_tree.Data.randomSeed = Random.Range(0, int.MaxValue);
@@ -51,7 +56,13 @@ namespace MrRoot.Root
 			// 	_tree.length = value;
 			// }));
 
-			_tweens.Add(_renderer.material.DOFloat(1f, "_Transition", 2f).From(0f));
+			_tweens.Add(_renderer.material.DOFloat(1f, "_Transition", _duration).From(0f).OnComplete(() =>
+			{
+				if (_target.TryGetComponent(out Building building))
+				{
+					building.Capture();
+				}
+			}));
 		}
 
 		public void Cut()
