@@ -20,7 +20,7 @@ namespace MrRoot.Managers
         }
 
         [Button]
-        private void SpawnRoot()
+        public void SpawnRoot()
         {
             var root = Instantiate(_rootPrefab);
             root.Initialize(GetRandomAvailableBuilding());
