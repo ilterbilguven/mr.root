@@ -10,7 +10,7 @@ namespace MrRoot.Root
 	public class EnemyRoot : MonoBehaviour
 	{
 		private ProceduralTree _tree;
-		private Renderer _renderer;
+		public Renderer _renderer;
 		private Transform _target;
 		private List<Tweener> _tweens = new List<Tweener>();
 		private float _duration;
