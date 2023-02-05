@@ -57,6 +57,7 @@ namespace MrRoot.Root
 
 			_tweens.Add(_renderer.material.DOFloat(1f, "_Transition", _duration).From(0f).OnComplete(() =>
 			{
+				if (!_target) return;
 				if (_target.TryGetComponent(out Building building))
 				{
 					building.Capture();

@@ -6,6 +6,7 @@ using MrRoot.Root;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
 namespace MrRoot.Managers
@@ -97,6 +98,7 @@ namespace MrRoot.Managers
             
             IsGameOver = true;
             GameOver?.Invoke(true);
+            SceneManager.LoadScene(2);
         }
 
         private void Lose()
@@ -109,11 +111,7 @@ namespace MrRoot.Managers
             
             IsGameOver = true;
             GameOver?.Invoke(false);
-        }
-
-        private void OnBlackAndWhite(bool active)
-        {
-            throw new NotImplementedException();
+            SceneManager.LoadScene(3);
         }
     }
 }

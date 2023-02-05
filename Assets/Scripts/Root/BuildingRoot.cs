@@ -35,6 +35,8 @@ namespace MrRoot
             {
                 foreach (var material in buildingRenderer.materials)
                 {
+                    material.DOKill(true);
+                    
                     material.DOColor(Color.red, 0.1f).SetLoops(6, LoopType.Yoyo);
                 }
             }

@@ -23,8 +23,11 @@ namespace MrRoot.Managers
             
             GameManager.Instance.GameOver += OnGameOver;
         }
+        
+        
         private void OnGameOver(bool obj)
         {
+            GameManager.Instance.GameOver -= OnGameOver;
             _timer.DOKill();
         }
 
