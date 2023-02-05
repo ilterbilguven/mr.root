@@ -15,6 +15,8 @@ namespace MrRoot.Root
 		private List<Tweener> _tweens = new List<Tweener>();
 		private float _duration;
 
+		public static event Action RootCut;
+
 		private void Awake()
 		{
 			TryGetComponent(out _tree);
@@ -68,6 +70,8 @@ namespace MrRoot.Root
 			{
 				tweener.Kill();
 			}
+			
+			RootCut?.Invoke();
 		}
 	}
 }

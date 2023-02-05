@@ -26,9 +26,9 @@ namespace MrRoot
                 return;
             }
             
-            if (TryGetComponent(out Renderer renderer))
+            if (TryGetComponent(out Renderer buildingRenderer))
             {
-                foreach (var material in renderer.materials)
+                foreach (var material in buildingRenderer.materials)
                 {
                     material.DOColor(Color.black, 0.5f);
                 }

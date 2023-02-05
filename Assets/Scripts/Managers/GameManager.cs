@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using MrRoot.Root;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace MrRoot.Managers
 {
     public class GameManager : SingletonBehaviour<GameManager>
     {
+        public event Action GameStarted; 
         public event Action<bool> GameOver;
         public int SessionTime = 60;
         public List<Building> Buildings = new List<Building>();
@@ -22,6 +24,17 @@ namespace MrRoot.Managers
             Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
         }
 
+        private IEnumerator Start()
+        {
+            
+            yield return new WaitForSeconds(3f);
+            
+            Initialize();
+            
+            
+            GameStarted?.Invoke();
+        }
+
 
         [Button]
         public void Initialize()
@@ -30,6 +43,8 @@ namespace MrRoot.Managers
             
             TimeManager.Instance.TimesUp += OnTimesUp;
             TimeManager.Instance.Initialize(SessionTime);
+            
+            EnemyManager.Instance.Initialize();
         }
 
         private void OnTimesUp()
