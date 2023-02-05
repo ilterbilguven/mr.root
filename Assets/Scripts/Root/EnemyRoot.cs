@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using ProceduralModeling;
 using Sirenix.OdinInspector;
@@ -9,10 +10,15 @@ namespace MrRoot.Root
 	public class EnemyRoot : MonoBehaviour
 	{
 		private ProceduralTree _tree;
+		private Renderer _renderer;
+		
+		private List<Tweener> _tweens = new List<Tweener>();
 
 		private void Awake()
 		{
 			TryGetComponent(out _tree);
+			TryGetComponent(out _renderer);
+        
 		}
 
 		public void Initialize(Transform target)
@@ -33,11 +39,26 @@ namespace MrRoot.Root
 		[Button]
 		public void Animate()
 		{
-			DOVirtual.Float(0, 1, 1f, value =>
+			_tweens.Add(DOVirtual.Float(0, 1, 2f, value =>
 			{
 				_tree.Data.targetBias = value;
 				_tree.Rebuild();
-			});
+			}));
+
+			_tweens.Add(DOVirtual.Float(0.5f, 4, 2f, value =>
+			{
+				_tree.length = value;
+			}));
+
+			_tweens.Add(_renderer.material.DOFloat(1f, "_Transition", 2f).From(0f));
+		}
+
+		public void Cut()
+		{
+			foreach (var tweener in _tweens)
+			{
+				tweener.Kill();
+			}
 		}
 	}
 }
