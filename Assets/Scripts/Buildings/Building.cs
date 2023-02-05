@@ -11,6 +11,7 @@ namespace MrRoot
     public class Building : MonoBehaviour
     {
         public event Action Captured;
+        private bool _captured;
 
         private void Awake()
         {
@@ -20,11 +21,21 @@ namespace MrRoot
         [Button]
         public void Capture()
         {
-            if (TryGetComponent(out Renderer renderer))
+            if (_captured)
             {
-                renderer.material.DOColor(Color.black, 0.5f);
+                return;
             }
             
+            if (TryGetComponent(out Renderer renderer))
+            {
+                foreach (var material in renderer.materials)
+                {
+                    material.DOColor(Color.black, 0.5f);
+                }
+
+            }
+            
+            _captured = true;
             Captured?.Invoke();
         }
     }

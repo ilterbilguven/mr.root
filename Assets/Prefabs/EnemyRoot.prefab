@@ -102,7 +102,7 @@ MonoBehaviour:
   _buildOnStart: 0
   data:
     randomSeed: 187
-    lengthAttenuation: 0.565
+    lengthAttenuation: 0.72
     radiusAttenuation: 0.614
     branchesMin: 1
     branchesMax: 2
@@ -117,8 +117,8 @@ MonoBehaviour:
     tempTargetPosition: {x: 16.42, y: 14.32, z: 0.4554484}
     targetBias: 0.77
   generations: 8
-  length: 5
-  radius: 0.17
+  length: 10
+  radius: 0.5
   _col: {fileID: 0}
 --- !u!114 &-1230800917637507997
 MonoBehaviour:
